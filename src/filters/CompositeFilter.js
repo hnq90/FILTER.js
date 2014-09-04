@@ -20,16 +20,18 @@
         name: "CompositeFilter"
         
         ,constructor: function( filters ) { 
-            this._stack = ( filters && filters.length ) ? filters.slice( ) : [ ];
+            var self = this;
+            self.$super('constructor');
+            self._stack = ( filters && filters.length ) ? filters.slice( ) : [ ];
         }
         
         ,_stack: null
         ,_stable: true
         
         ,dispose: function( withFilters ) {
-            var i, stack = this._stack;
+            var self = this, i, stack = self._stack;
             
-            this.disposeWorker( );
+            self.$super('dispose');
             
             if ( true === withFilters )
             {
@@ -39,13 +41,13 @@
                     stack[ i ] = null;
                 }
             }
-            this._stack = null;
+            self._stack = null;
             
-            return this;
+            return self;
         }
         
         ,serialize: function( ) {
-            var json = { filter: this.name, _isOn: !!this._isOn, _stable: !!this._stable, filters: [ ] }, i, stack = this._stack;
+            var self = this, json = { filter: self.name, _isOn: !!self._isOn, _stable: !!self._stable, filters: [ ] }, i, stack = self._stack;
             for (i=0; i<stack.length; i++)
             {
                 json.filters.push( stack[ i ].serialize( ) );
@@ -183,10 +185,10 @@
         
         // used for internal purposes
         ,_apply: function( im, w, h, image ) {
-            
-            if ( this._isOn && this._stack.length )
+            var self = this;
+            if ( self._isOn && self._stack.length )
             {
-                var _filterstack = this._stack, _stacklength = _filterstack.length, 
+                var _filterstack = self._stack, _stacklength = _filterstack.length, 
                     fi, filter;
                     
                 for ( fi=0; fi<_stacklength; fi++ )
@@ -197,32 +199,9 @@
             }
             return im;
         }
-        
-        // make it so other composite filters can be  used as simple filter components in the stack
-        ,apply: function( image, cb ) {
-            if ( image && this._isOn && this._stack.length )
-            {
-                var im = image.getSelectedData( );
-                if ( this._worker )
-                {
-                    this
-                        .bind( 'apply', function( data ) { 
-                            this.unbind( 'apply' );
-                            if ( data && data.im )
-                                image.setSelectedData( data.im );
-                            if ( cb ) cb.call( this );
-                        })
-                        // process request
-                        .send( 'apply', {im: im, params: this.serialize( )} )
-                    ;
-                }
-                else
-                {
-                    image.setSelectedData( this._apply( im[ 0 ], im[ 1 ], im[ 2 ], image ) );
-                    if ( cb ) cb.call( this );
-                }
-            }
-            return image;
+            
+        ,canRun: function( ) {
+            return this._isOn && this._stack.length;
         }
         
         ,toString: function( ) {

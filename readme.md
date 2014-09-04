@@ -3,7 +3,17 @@
 
 __A JavaScript Library for Image/Video Processing and Filtering using HTML5 APIs__
 
+
 This is a library for filtering images/video in JavaScript using HTML5 features like Canvas, WebWorkers, WebGL and SVG (in progress).  
+
+
+* [filter.js](https://raw.githubusercontent.com/foo123/FILTER.js/master/build/filter.js)
+* [filter.min.js](https://raw.githubusercontent.com/foo123/FILTER.js/master/build/filter.min.js)
+* [filter.plugins.js](https://raw.githubusercontent.com/foo123/FILTER.js/master/build/filter.plugins.js)
+* [filter.plugins.min.js](https://raw.githubusercontent.com/foo123/FILTER.js/master/build/filter.plugins.min.js)
+* [filter.bundle.js, filter+plugins+dependencies](https://raw.githubusercontent.com/foo123/FILTER.js/master/build/filter.bundle.js)
+
+
 
 ###Contents
 
@@ -42,7 +52,10 @@ Some filters code has been adapted from open source libraries (mostly flash and 
 
 ###Features
 
-The library has a dependency on [Classy.js](https://github.com/foo123/classy.js) micro Object-Oriented framework.
+The library dependencies are:
+
+* [Classy.js](https://github.com/foo123/classy.js) micro Object-Oriented framework.
+* [Asynchronous](https://github.com/foo123/asynchronous.js) simple manager for async/parallel tasks.
 
 The framework defines an [Image Proxy class](/api-reference.md#image-class), which represents an Image, a Color Utilities Class and 8 generic Filter types plus various Plugins (with support for parallel processing transparently)
 

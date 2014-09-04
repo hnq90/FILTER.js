@@ -20,16 +20,19 @@
         name: "CustomFilter"
         
         ,constructor: function( handler ) {
+            var self = this;
+            self.$super('constructor');
             // using bind makes the code become [native code] and thus unserializable
-            this._handler = handler && 'function' === typeof(handler) ? handler/*.bind( this )*/ : null;
+            self._handler = handler && 'function' === typeof(handler) ? handler : null;
         }
         
         ,_handler: null
         
         ,dispose: function( ) {
-            this.disposeWorker( );
-            this._handler = null;
-            return this;
+            var self = this;
+            self.$super('dispose');
+            self._handler = null;
+            return self;
         }
         
         ,serialize: function( ) {
@@ -56,41 +59,20 @@
                 if ( params._handler )
                 {
                     // using bind makes the code become [native code] and thus unserializable
-                    self._handler = eval( '(function(){ "use strict"; return ' + params._handler + '})();')/*.bind( self )*/;
+                    self._handler = eval( '(function(){ "use strict"; return ' + params._handler + '})();');
                 }
             }
             return self;
         }
         
         ,_apply: function( im, w, h, image ) {
-            if ( !this._isOn || !this._handler ) return im;
-            return this._handler.call( this, im, w, h, image );
+            var self = this;
+            if ( !self._isOn || !self._handler ) return im;
+            return self._handler( self, im, w, h, image );
         }
-        
-        ,apply: function( image, cb ) {
-            if ( this._isOn && this._handler )
-            {
-                var im = image.getSelectedData( );
-                if ( this._worker )
-                {
-                    this
-                        .bind( 'apply', function( data ) { 
-                            this.unbind( 'apply' );
-                            if ( data && data.im )
-                                image.setSelectedData( data.im );
-                            if ( cb ) cb.call( this );
-                        })
-                        // process request
-                        .send( 'apply', {im: im, params: this.serialize( )} )
-                    ;
-                }
-                else
-                {
-                    image.setSelectedData( this._handler.call( this, im[ 0 ], im[ 1 ], im[ 2 ], image ) );
-                    if ( cb ) cb.call( this );
-                }
-            }
-            return image;
+            
+        ,canRun: function( ) {
+            return this._isOn && this._handler;
         }
     });
     
